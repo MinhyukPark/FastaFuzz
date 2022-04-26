@@ -9,6 +9,7 @@ K = 30
 N = 30
 COMMAND_DICT = {
     "mafft": "mafft --auto INPUT_FASTA",
+    "failing_executable": "./failing_executable",
 }
 
 
@@ -23,6 +24,7 @@ def get_random_dna_sequence(length):
 
 def run_mafft_wrapper(args):
     return run("mafft", *args)
+    # return run("failing_executable", *args)
 
 def run(command, input_fasta, output_prefix, errors_prefix):
     command = COMMAND_DICT[command].replace("INPUT_FASTA", input_fasta)
@@ -31,7 +33,8 @@ def run(command, input_fasta, output_prefix, errors_prefix):
             # print(shlex.split(iqtree_command))
             p = subprocess.Popen(shlex.split(command), stdout=fout, stderr=ferr)
     out,err = p.communicate()
-    return out,err
+    exit_code = p.wait()
+    return out,err,exit_code
 
 def generate_single_and_multi_line_fasta():
     sequence_id_set = set()
